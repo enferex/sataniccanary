@@ -1,6 +1,8 @@
 Satanic Canary: A GCC plugin implementing various stack canaries.
+=================================================================
 
-== Summary ==
+Summary
+-------
 The Satanic Canary gcc plugin implements three types of stack canaries.
 Two of these are currently enabled, and they are described below.
 
@@ -21,7 +23,8 @@ The canaries are chosen at 'random' for each function being compiled.
 The array of structs below in the 'canaries' array are the canaries that can
 be enabled/disabled.
  
-== Canaries Provided by this Plugin ==
+Canaries Provided by this Plugin
+--------------------------------
 * Basic Canary: This canary places a random constant value/canary on the
 stack and this same value should lie there unmodified upon function
 return/epilogue.  This value will be different for each function compiled.
@@ -45,5 +48,7 @@ verify the stack sanity by XOR'ing the CS data and the (TSC xor DATA) that
 was pushed onto the stack.  The result should be the TSC value we pushed on
 the stack as the first value.
 
-== Contact ==
-Matt Davis (enferex) <mattdavis9@gmail.com>
+Contact
+-------
+Matt Davis (enferex)
+mattdavis9@gmail.com
