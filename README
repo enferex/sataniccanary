@@ -1,0 +1,49 @@
+Satanic Canary: A GCC plugin implementing various stack canaries.
+
+== Summary ==
+The Satanic Canary gcc plugin implements three types of stack canaries.
+Two of these are currently enabled, and they are described below.
+
+This plugin is merely for testing/exploring stack canaries and what they can
+do for binary runtime security.  I feel safe in saying that the Basic and
+TSC Data canaries can be used, but are not perfect.  Canaries are not always
+impervious to compromise.  Likewise, they can impart overhead to the program
+being executed.
+
+A canary, or stack cookie, is merely a value on the stack which is placed
+there at compile time in the function prologue.  During runtime, at function
+epilogue,  the sanity of that value is checked.  If the value has been
+modified then the canary calls an abort() since the stack has been corrupted
+(either through bad programming or a malicious intent).
+
+The canaries are chosen at 'random' for each function being compiled.
+
+The array of structs below in the 'canaries' array are the canaries that can
+be enabled/disabled.
+ 
+== Canaries Provided by this Plugin ==
+* Basic Canary: This canary places a random constant value/canary on the
+stack and this same value should lie there unmodified upon function
+return/epilogue.  This value will be different for each function compiled.
+
+* TSC Canary: This canary places a value on the stack.  This value is
+obtained from the more active (low 32bits) of the Timestamp Counter (TSC).
+The TSC is dynamic and different for each execution of the function at
+runtime.  This is a really craptastic canary and should not be used.  It is
+easily compromised if the stack if overrun with the same data.  For each call
+to a function with this canary enabled, the TSC value is placed twice on the
+stack, back to back.  If, upon prologue, the two values differ, then the
+stack is said to be corrupt and the program abort()s out.  Now, if the stack
+is overwritten with the same value/pattern, then, these two values will still
+be the same, e.g. and the canary will not detect a corruption... bad, bad
+canary!
+
+* TSC Data Canary: This canary places a TSC stamp, the low 32-bits, on the
+stack and XOR's it against read-only data in the CS segment.  That XOR value,
+(DATA xor TSC) is placed on the stack also.  Upon function epilogue, we
+verify the stack sanity by XOR'ing the CS data and the (TSC xor DATA) that
+was pushed onto the stack.  The result should be the TSC value we pushed on
+the stack as the first value.
+
+== Contact ==
+Matt Davis (enferex) <mattdavis9@gmail.com>
